@@ -6,6 +6,12 @@ from gymnasium_robotics.envs.fetch import MujocoFetchEnv, MujocoPyFetchEnv
 
 MODEL_XML_PATH = os.path.join("fetch", "pick_and_place_drawer.xml")
 
+# These values can be checked in the mujoco viewer
+# python -m mujoco.viewer --mjcf=gymnasium_robotics/envs/assets/fetch/pick_and_place_drawer.xml
+# Click Watch --> qpos index 22 --> drag the drawer open and closed and observe the changes
+DRAWER_STATE_IDX = 22
+DRAWER_OPEN = 0.0
+DRAWER_CLOSED = 0.16
 
 class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchEnv, EzPickle):
     """
@@ -151,31 +157,8 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchEnv, EzPickle):
             reward_type=reward_type,
             **kwargs,
         )
-        EzPickle.__init__(self, reward_type=reward_type, **kwargs)
+        EzPickle.__init__(self, reward_type=reward_type, **kwargs)        
 
-
-class MujocoPyFetchPickAndPlaceEnv(MujocoPyFetchEnv, EzPickle):
-    def __init__(self, reward_type="sparse", **kwargs):
-        initial_qpos = {
-            "robot0:slide0": 0.405,
-            "robot0:slide1": 0.48,
-            "robot0:slide2": 0.0,
-            "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
-        }
-        MujocoPyFetchEnv.__init__(
-            self,
-            model_path=MODEL_XML_PATH,
-            has_object=True,
-            block_gripper=False,
-            n_substeps=20,
-            gripper_extra_height=0.2,
-            target_in_the_air=True,
-            target_offset=0.0,
-            obj_range=0.15,
-            target_range=0.15,
-            distance_threshold=0.05,
-            initial_qpos=initial_qpos,
-            reward_type=reward_type,
-            **kwargs,
-        )
-        EzPickle.__init__(self, reward_type=reward_type, **kwargs)
+    def get_drawer_state(self):
+        """ Returns the state of the drawer. """
+        return self.data.qpos[22]
