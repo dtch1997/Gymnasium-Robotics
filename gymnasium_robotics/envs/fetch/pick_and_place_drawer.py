@@ -12,7 +12,7 @@ MODEL_XML_PATH = os.path.join("fetch", "pick_and_place_drawer.xml")
 # python -m mujoco.viewer --mjcf=gymnasium_robotics/envs/assets/fetch/pick_and_place_drawer.xml
 # Click Watch --> qpos index 22 --> drag the drawer open and closed and observe the changes
 DRAWER_STATE_IDX = 22
-DRAWER_OPEN = 0.16
+DRAWER_OPEN = -0.12
 DRAWER_CLOSED = 0.0
 
 class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
