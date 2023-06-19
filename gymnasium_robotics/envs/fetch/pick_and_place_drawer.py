@@ -11,7 +11,8 @@ MODEL_XML_PATH = os.path.join("fetch", "pick_and_place_drawer.xml")
 # These values can be checked in the mujoco viewer
 # python -m mujoco.viewer --mjcf=gymnasium_robotics/envs/assets/fetch/pick_and_place_drawer.xml
 # Click Watch --> qpos index 22 --> drag the drawer open and closed and observe the changes
-DRAWER_STATE_IDX = 22
+DRAWER_QPOS_IDX = 22
+DRAWER_QVEL_IDX = 21
 DRAWER_OPEN = -0.12
 DRAWER_CLOSED = 0.0
 
@@ -19,7 +20,7 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
     """ This environment is the same as FetchPickAndPlaceEnv, but with a drawer."""
 
     def __init__(self, reward_type="sparse", **kwargs):
-        # Changes from original PickAndPlace env: a 
+        # Changes from original PickAndPlace env:
         # - Changed model path
         # - Add drawer state to observation space
         initial_qpos = {
@@ -66,12 +67,15 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
 
     def get_drawer_state(self):
         """ Returns the state of the drawer. """
-        return self.data.qpos[22]
-    
+        pos = self.data.qpos[DRAWER_QPOS_IDX]
+        vel = self.data.qvel[DRAWER_QVEL_IDX]
+        return (pos, vel)
+
     def _reset_sim(self):
         retval = super()._reset_sim()
         # Reset the drawer state
-        self.data.qpos[22] = DRAWER_CLOSED
+        self.data.qpos[DRAWER_QPOS_IDX] = DRAWER_CLOSED
+        self.data.qvel[DRAWER_QVEL_IDX] = 0.0
         return retval
 
     def _get_obs(self):
