@@ -7,10 +7,19 @@ def print_env_info(env: gym.Env):
     print("Observation space: ", env.observation_space)
     print("Action space: ", env.action_space)
 
-if __name__ == "__main__":
-    env = gym.make("FetchPickAndPlaceDrawer-v2", render_mode='human')
+if __name__ == "__main__":    
+    env = gym.make(
+        "FetchPickAndPlaceDrawer-v2", 
+        render_mode='human', 
+        is_closed_on_reset = False # Default: True
+    )
     print("Env info of FetchPickAndPlaceDrawer-v2")
     print_env_info(env)
     env.reset()
+
+    # Use these methods to reset the drawer state
+    env.reset_drawer_closed() 
+    env.reset_drawer_open()
+    
     img = env.render()
     input("Press Enter to continue...")

@@ -29,6 +29,7 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             "robot0:slide2": 0.0,
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
         }
+        self.is_closed_on_reset = kwargs.pop("is_closed_on_reset", True)
         MujocoFetchEnv.__init__(
             self,
             model_path=MODEL_XML_PATH,
@@ -65,6 +66,16 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             )
         )
 
+    def reset_drawer_closed(self):
+        """ Resets the environment with the drawer closed. """
+        self.is_closed_on_reset = True
+        return self.reset()
+    
+    def reset_drawer_open(self):
+        """ Resets the environment with the drawer open. """
+        self.is_closed_on_reset = False
+        return self.reset()
+
     def get_drawer_state(self):
         """ Returns the state of the drawer. """
         pos = self.data.qpos[DRAWER_QPOS_IDX]
@@ -74,7 +85,8 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
     def _reset_sim(self):
         retval = super()._reset_sim()
         # Reset the drawer state
-        self.data.qpos[DRAWER_QPOS_IDX] = DRAWER_CLOSED
+        drawer_state = DRAWER_CLOSED if self.is_closed_on_reset else DRAWER_OPEN
+        self.data.qpos[DRAWER_QPOS_IDX] = drawer_state
         self.data.qvel[DRAWER_QVEL_IDX] = 0.0
         return retval
 
