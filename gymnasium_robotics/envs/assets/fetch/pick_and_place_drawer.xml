@@ -7,6 +7,7 @@
 
 	<include file="shared.xml"></include>
 	<include file="../stls/objects/assets/drawer_dependencies.xml"/>
+    <include file="../stls/objects/assets/block_dependencies.xml"/>
 	<worldbody>
 		<geom name="floor0" pos="0.8 0.75 0" size="0.85 0.7 1" type="plane" condim="3" material="floor_mat"></geom>
 		<body name="floor0" pos="0.8 0.75 0">
@@ -35,6 +36,16 @@
         <body name="drawer" pos="1.3 0.9 0.40">
             <include file="../stls/objects/assets/drawer.xml"></include>
         </body>
+
+		<!-- 
+		We can put this block in to debug positions 
+		
+		<body name="block" childclass="block_base" pos="1.0 1.0 1.0">
+			<freejoint/>
+			<geom material="block_wood" pos="0 0 .02" mesh="block"/>
+			<geom name="blockGeom" class="block_col" pos="0 0 .02" size="0.02 0.02 0.02" type="box" mass=".1"/>
+		</body> 
+		!-->
 
 		<light directional="true" ambient="0.2 0.2 0.2" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3" castshadow="false" pos="0 0 4" dir="0 0 -1" name="light0"></light>
 	</worldbody>
