@@ -33,7 +33,7 @@
 			<site name="object0" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
 		</body>
 
-        <body name="drawer" pos="1.3 1.05 0.40" childclass="drawer_base">
+        <body name="drawer" pos="1.3 1.15 0.40" childclass="drawer_base">
 			<body name="drawercase_link" pos="0 0 0.084">
 				<geom material="drawer_beige" mesh="drawercase"/>
 				<geom class="drawer_col" pos="-0.11 0 0" size="0.008 0.1 0.084" type="box" mass=".05"/>
