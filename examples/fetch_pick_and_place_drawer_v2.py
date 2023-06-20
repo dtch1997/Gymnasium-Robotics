@@ -15,7 +15,8 @@ if __name__ == "__main__":
     )
     print("Env info of FetchPickAndPlaceDrawer-v2")
     print_env_info(env)
-    env.reset()
+    obs = env.reset()
+    print("Observation: ", obs)
 
     # Use these methods to reset the drawer state
     env.reset_drawer_closed() 

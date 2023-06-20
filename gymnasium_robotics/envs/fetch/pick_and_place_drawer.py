@@ -63,6 +63,18 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
                 drawer_state=spaces.Box(
                     -np.inf, np.inf, shape=obs["drawer_state"].shape, dtype="float64"
                 ),
+                info=spaces.Dict(dict(
+                    drawer_handle=spaces.Box(
+                        -np.inf, np.inf, shape=obs["info"]["drawer_handle"].shape, dtype="float64"
+                    ),
+                    drawer_volume_min=spaces.Box(
+                        -np.inf, np.inf, shape=obs["info"]["drawer_volume_min"].shape, dtype="float64"
+                    ),
+                    drawer_volume_max=spaces.Box(
+                        -np.inf, np.inf, shape=obs["info"]["drawer_volume_max"].shape, dtype="float64"
+                    ),
+                    )
+                ),
             )
         )
 
@@ -81,6 +93,10 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
         pos = self.data.qpos[DRAWER_QPOS_IDX]
         vel = self.data.qvel[DRAWER_QVEL_IDX]
         return (pos, vel)
+    
+    def get_site_xpos(self, site_name: str):
+        """ Returns the position of a site. """
+        return self.data.site(site_name).xpos.copy()
 
     def _reset_sim(self):
         retval = super()._reset_sim()
@@ -94,4 +110,8 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
         base_obs = super()._get_obs()
         # Add the drawer state to the observation
         base_obs["drawer_state"] = np.array(self.get_drawer_state())
+        base_obs["info"] = dict()
+        base_obs["info"]["drawer_handle"] = self.get_site_xpos("drawer_handle")
+        base_obs["info"]["drawer_volume_min"] = self.get_site_xpos("drawer_volume_min")
+        base_obs["info"]["drawer_volume_max"] = self.get_site_xpos("drawer_volume_max")
         return base_obs
