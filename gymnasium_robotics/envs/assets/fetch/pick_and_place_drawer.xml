@@ -21,13 +21,13 @@
 		</body>
 		
 		<body name="object0" pos="0.025 0.025 0.025">
-		<!-- Daniel: 
-			I had to add the following line with inertial data in order to get the drawer env to work.
-			This line is not present in the original pick_and_place.xml file. 
-			I have no idea why I needed to add it but noting this down here for future reference.
-		-->
-		<inertial mass="0.001" diaginertia="0.001 0.001 0.001" pos="0.7 0 1"/>
-		<!-- ^ That's the line I added. -->
+			<!-- Daniel: 
+				I had to add the following line with inertial data in order to get the drawer env to work.
+				This line is not present in the original pick_and_place.xml file. 
+				I have no idea why I needed to add it but noting this down here for future reference.
+			-->
+			<inertial mass="0.001" diaginertia="0.001 0.001 0.001" pos="0.0 0 0"/>
+			<!-- ^ That's the line I added. -->
 			<joint name="object0:joint" type="free" damping="0.01"></joint>
 			<geom size="0.025 0.025 0.025" type="box" condim="3" name="object0" material="block_mat" mass="2"></geom>
 			<site name="object0" pos="0 0 0" size="0.02 0.02 0.02" rgba="1 0 0 1" type="sphere"></site>
