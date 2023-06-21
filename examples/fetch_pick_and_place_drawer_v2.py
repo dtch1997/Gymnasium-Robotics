@@ -1,3 +1,4 @@
+import numpy as np
 import gymnasium as gym 
 import gymnasium_robotics.envs # noqa: F401
 
@@ -6,6 +7,9 @@ def print_env_info(env: gym.Env):
     print("Qvel shape: ", env.data.qvel.shape)
     print("Observation space: ", env.observation_space)
     print("Action space: ", env.action_space)
+
+def zero_action(env: gym.Env):
+    return np.zeros(env.action_space.shape)
 
 if __name__ == "__main__":    
     env = gym.make(
@@ -22,5 +26,9 @@ if __name__ == "__main__":
     env.reset_drawer_closed() 
     env.reset_drawer_open()
     
-    img = env.render()
-    input("Press Enter to continue...")
+    try:
+        while True:
+            img = env.render()
+            obs, reward, term, trunc, info = env.step(zero_action(env))
+    except KeyboardInterrupt:
+        env.close()
