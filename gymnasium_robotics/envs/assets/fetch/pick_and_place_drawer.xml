@@ -26,7 +26,7 @@
 				This line is not present in the original pick_and_place.xml file. 
 				I have no idea why I needed to add it but noting this down here for future reference.
 			-->
-			<inertial mass="0.001" diaginertia="0.001 0.001 0.001" pos="0.0 0 0"/>
+			<inertial mass="0.1" diaginertia="0.1 0.1 0.1" pos="0 0 0"/>
 			<!-- ^ That's the line I added. -->
 			<joint name="object0:joint" type="free" damping="0.01"></joint>
 			<geom size="0.025 0.025 0.025" type="box" condim="3" name="object0" material="block_mat" mass="2" solimp="0.999 0.9999 0.001 0.5 2"></geom>
