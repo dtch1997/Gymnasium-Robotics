@@ -25,8 +25,8 @@ if __name__ == "__main__":
 
     # Use these methods to reset the drawer state
 
-    # env.reset_drawer_open()
-    env.reset_drawer_closed() 
+    env.reset_drawer_open()
+    # env.reset_drawer_closed() 
     
     # env.reset_cube_outside_drawer()
     env.reset_cube_inside_drawer()

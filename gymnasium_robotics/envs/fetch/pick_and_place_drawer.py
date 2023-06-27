@@ -125,6 +125,9 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
         drawer_state = DRAWER_CLOSED if self.is_closed_on_reset else DRAWER_OPEN            
         self.data.qpos[DRAWER_QPOS_IDX] = drawer_state
         self.data.qvel[DRAWER_QVEL_IDX] = 0.0
+        # Step the simulation so that the drawer state is updated
+        # to calculate the correct cube position
+        self._mujoco.mj_forward(self.model, self.data)
 
         # Reset the cube position
         if self.is_cube_inside_drawer_on_reset:
