@@ -132,8 +132,12 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
         # Reset the cube position
         if self.is_cube_inside_drawer_on_reset:
             drawer_bbox_min, drawer_bbox_max = self.get_drawer_bbox()
+            # Calc start pos
+            cube_x = (drawer_bbox_max[0] + drawer_bbox_min[0]) / 2
+            cube_y = drawer_bbox_min[1] + (drawer_bbox_max[1] - drawer_bbox_min[1]) * 0.4
+            cube_z = drawer_bbox_min[2] + (drawer_bbox_max[2] - drawer_bbox_min[2]) * 0.33
+            cube_xyz = np.array([cube_x, cube_y, cube_z])
             # Move the cube inside the drawer
-            cube_xyz = np.random.uniform(low=drawer_bbox_min, high=drawer_bbox_max)
             cube_quat = np.array([1.0, 0.0, 0.0, 0.0])
             cube_qpos = np.concatenate([cube_xyz, cube_quat])
             self._utils.set_joint_qpos(self.model, self.data, "object0:joint", cube_qpos)
