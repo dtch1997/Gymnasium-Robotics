@@ -16,7 +16,7 @@ if __name__ == "__main__":
         "FetchPickAndPlaceDrawer-v2", 
         render_mode='human', 
         is_closed_on_reset = False, # Default: True
-        is_cube_inside_drawer = False # Default: True
+        is_cube_inside_drawer_on_reset = False # Default: True
     )
     print("Env info of FetchPickAndPlaceDrawer-v2")
     print_env_info(env)

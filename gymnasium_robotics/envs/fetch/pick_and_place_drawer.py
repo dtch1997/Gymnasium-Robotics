@@ -30,7 +30,7 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
         }
         self.is_closed_on_reset = kwargs.pop("is_closed_on_reset", True)
-        self.cube_inside_drawer = kwargs.pop("cube_inside_drawer", True)
+        self.is_cube_inside_drawer_on_reset = kwargs.pop("is_cube_inside_drawer_on_reset", True)
         MujocoFetchEnv.__init__(
             self,
             model_path=MODEL_XML_PATH,
@@ -81,12 +81,12 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
 
     def reset_cube_inside_drawer(self):
         """ Resets the environment with the cube inside the drawer. """
-        self.cube_inside_drawer = True
+        self.is_cube_inside_drawer_on_reset = True
         return self.reset()
     
     def reset_cube_outside_drawer(self):
         """ Resets the environment with the cube outside the drawer. """
-        self.cube_inside_drawer = False
+        self.is_cube_inside_drawer_on_reset = False
         return self.reset()
     
     def get_drawer_bbox(self):
@@ -127,7 +127,7 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
         self.data.qvel[DRAWER_QVEL_IDX] = 0.0
 
         # Reset the cube position
-        if self.cube_inside_drawer:
+        if self.is_cube_inside_drawer_on_reset:
             drawer_bbox_min, drawer_bbox_max = self.get_drawer_bbox()
             # Move the cube inside the drawer
             cube_xyz = np.random.uniform(low=drawer_bbox_min, high=drawer_bbox_max)
