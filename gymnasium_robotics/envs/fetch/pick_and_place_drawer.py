@@ -30,6 +30,7 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
         }
         self.is_closed_on_reset = kwargs.pop("is_closed_on_reset", True)
+        self.cube_inside_drawer = kwargs.pop("cube_inside_drawer", True)
         MujocoFetchEnv.__init__(
             self,
             model_path=MODEL_XML_PATH,
@@ -78,6 +79,23 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             )
         )
 
+    def reset_cube_inside_drawer(self):
+        """ Resets the environment with the cube inside the drawer. """
+        self.cube_inside_drawer = True
+        return self.reset()
+    
+    def reset_cube_outside_drawer(self):
+        """ Resets the environment with the cube outside the drawer. """
+        self.cube_inside_drawer = False
+        return self.reset()
+    
+    def get_drawer_bbox(self):
+        """ Returns the bounding box of the drawer. """
+        return (
+            self.get_site_xpos("drawer_volume_min"),
+            self.get_site_xpos("drawer_volume_max")
+        )
+
     def reset_drawer_closed(self):
         """ Resets the environment with the drawer closed. """
         self.is_closed_on_reset = True
@@ -100,10 +118,22 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
 
     def _reset_sim(self):
         retval = super()._reset_sim()
+        # TODO: Refactor this logic
+        # Instead of manually setting states, we could modify initial_qpos?
+
         # Reset the drawer state
-        drawer_state = DRAWER_CLOSED if self.is_closed_on_reset else DRAWER_OPEN
+        drawer_state = DRAWER_CLOSED if self.is_closed_on_reset else DRAWER_OPEN            
         self.data.qpos[DRAWER_QPOS_IDX] = drawer_state
         self.data.qvel[DRAWER_QVEL_IDX] = 0.0
+
+        # Reset the cube position
+        if self.cube_inside_drawer:
+            drawer_bbox_min, drawer_bbox_max = self.get_drawer_bbox()
+            # Move the cube inside the drawer
+            cube_xyz = np.random.uniform(low=drawer_bbox_min, high=drawer_bbox_max)
+            cube_quat = np.array([1.0, 0.0, 0.0, 0.0])
+            cube_qpos = np.concatenate([cube_xyz, cube_quat])
+            self._utils.set_joint_qpos(self.model, self.data, "object0:joint", cube_qpos)
         return retval
 
     def _get_obs(self):
@@ -112,6 +142,7 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
         base_obs["drawer_state"] = np.array(self.get_drawer_state())
         base_obs["info"] = dict()
         base_obs["info"]["drawer_handle"] = self.get_site_xpos("drawer_handle")
+        # TODO: Rename this to drawer_bbox_{min,max}
         base_obs["info"]["drawer_volume_min"] = self.get_site_xpos("drawer_volume_min")
         base_obs["info"]["drawer_volume_max"] = self.get_site_xpos("drawer_volume_max")
         return base_obs

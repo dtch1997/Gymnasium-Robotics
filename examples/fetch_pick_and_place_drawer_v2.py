@@ -15,7 +15,8 @@ if __name__ == "__main__":
     env = gym.make(
         "FetchPickAndPlaceDrawer-v2", 
         render_mode='human', 
-        is_closed_on_reset = False # Default: True
+        is_closed_on_reset = False, # Default: True
+        is_cube_inside_drawer = False # Default: True
     )
     print("Env info of FetchPickAndPlaceDrawer-v2")
     print_env_info(env)
@@ -23,9 +24,13 @@ if __name__ == "__main__":
     print("Observation: ", obs)
 
     # Use these methods to reset the drawer state
+
+    # env.reset_drawer_open()
     env.reset_drawer_closed() 
-    env.reset_drawer_open()
     
+    # env.reset_cube_outside_drawer()
+    env.reset_cube_inside_drawer()
+
     try:
         while True:
             img = env.render()
