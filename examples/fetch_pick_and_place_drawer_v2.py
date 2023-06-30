@@ -16,24 +16,27 @@ if __name__ == "__main__":
         "FetchPickAndPlaceDrawer-v2", 
         render_mode='human', 
         is_closed_on_reset = False, # Default: True
-        is_cube_inside_drawer_on_reset = False # Default: True
+        cube_pos_on_reset = "in_drawer" # Default: True
     )
     print("Env info of FetchPickAndPlaceDrawer-v2")
     print_env_info(env)
-    obs = env.reset()
+    obs, info = env.reset()
     print("Observation: ", obs)
+    print("\nreset cube_pos: ", obs['observation'][3:6])
 
     # Use these methods to reset the drawer state
 
-    env.reset_drawer_open()
+    # env.reset_drawer_open()
     # env.reset_drawer_closed() 
     
     # env.reset_cube_outside_drawer()
-    env.reset_cube_inside_drawer()
+    # env.reset_cube_inside_drawer()
 
     try:
-        while True:
+        for _ in range(50):
             img = env.render()
             obs, reward, term, trunc, info = env.step(zero_action(env))
+            print("Step cube_pos: ", obs['observation'][3:6])
+            input()
     except KeyboardInterrupt:
         env.close()
