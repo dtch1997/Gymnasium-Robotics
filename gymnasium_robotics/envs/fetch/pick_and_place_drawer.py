@@ -124,6 +124,8 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
 
     def _reset_sim(self):
         retval = super()._reset_sim()
+        if not retval:
+            return False
         # TODO: Refactor this logic
         # Instead of manually setting states, we could modify initial_qpos?
 
@@ -152,7 +154,8 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             cube_quat = np.array([1.0, 0.0, 0.0, 0.0])
             cube_qpos = np.concatenate([cube_xyz, cube_quat])
             self._utils.set_joint_qpos(self.model, self.data, "object0:joint", cube_qpos)
-        return retval
+        self._mujoco.mj_forward(self.model, self.data)
+        return True
 
     def _get_obs(self):
         base_obs = super()._get_obs()
