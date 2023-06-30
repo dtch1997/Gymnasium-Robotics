@@ -30,7 +30,8 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
         }
         self.is_closed_on_reset = kwargs.pop("is_closed_on_reset", True)
-        self.is_cube_inside_drawer_on_reset = kwargs.pop("is_cube_inside_drawer_on_reset", True)
+        self.cube_pos_on_reset = kwargs.pop("cube_pos_on_reset", "table")
+        assert self.cube_pos_on_reset in ["table", "in_drawer", "on_drawer"]
         MujocoFetchEnv.__init__(
             self,
             model_path=MODEL_XML_PATH,
@@ -81,12 +82,17 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
 
     def reset_cube_inside_drawer(self):
         """ Resets the environment with the cube inside the drawer. """
-        self.is_cube_inside_drawer_on_reset = True
+        self.cube_pos_on_reset = "in_drawer"
         return self.reset()
     
-    def reset_cube_outside_drawer(self):
+    def reset_cube_ontop_drawer(self):
+        """ Resets the environment with the cube inside the drawer. """
+        self.cube_pos_on_reset = "on_drawer"
+        return self.reset()
+    
+    def reset_cube_on_table(self):
         """ Resets the environment with the cube outside the drawer. """
-        self.is_cube_inside_drawer_on_reset = False
+        self.cube_pos_on_reset = "table"
         return self.reset()
     
     def get_drawer_bbox(self):
@@ -130,12 +136,17 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
         self._mujoco.mj_forward(self.model, self.data)
 
         # Reset the cube position
-        if self.is_cube_inside_drawer_on_reset:
+        if self.cube_pos_on_reset != "table":
             drawer_bbox_min, drawer_bbox_max = self.get_drawer_bbox()
             # Calc start pos
             cube_x = (drawer_bbox_max[0] + drawer_bbox_min[0]) / 2
             cube_y = drawer_bbox_min[1] + (drawer_bbox_max[1] - drawer_bbox_min[1]) * 0.4
-            cube_z = drawer_bbox_min[2] + (drawer_bbox_max[2] - drawer_bbox_min[2]) * 0.33
+            if self.cube_pos_on_reset == "in_drawer":
+                cube_z = drawer_bbox_min[2] + (drawer_bbox_max[2] - drawer_bbox_min[2]) * 0.33
+            else:
+                 # TODO: make random x-y position
+                cube_y = cube_y - self.get_drawer_state()[0]
+                cube_z = drawer_bbox_max[2] + 0.04
             cube_xyz = np.array([cube_x, cube_y, cube_z])
             # Move the cube inside the drawer
             cube_quat = np.array([1.0, 0.0, 0.0, 0.0])
