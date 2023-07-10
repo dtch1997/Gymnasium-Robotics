@@ -30,6 +30,7 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
             "object0:joint": [1.25, 0.53, 0.4, 1.0, 0.0, 0.0, 0.0],
         }
         self.is_closed_on_reset = kwargs.pop("is_closed_on_reset", True)
+        self.is_cube_inside_drawer_on_reset = kwargs.pop("is_cube_inside_drawer_on_reset", True)
         self.cube_pos_on_reset = kwargs.pop("cube_pos_on_reset", "table")
         assert self.cube_pos_on_reset in ["table", "in_drawer", "on_drawer"]
         MujocoFetchEnv.__init__(
@@ -79,6 +80,12 @@ class MujocoFetchPickAndPlaceDrawerEnv(MujocoFetchPickAndPlaceEnv):
                 ),
             )
         )
+
+        # Fix the gripper morphing
+        # This works by reducing the solimp value of the weld constraint
+        # between the gripper and the commanded gripper position
+        # Since the contact constraint is now stronger, the gripper will not morph
+        self.model.eq_solimp[0] = 0.7
 
     def reset_cube_inside_drawer(self):
         """ Resets the environment with the cube inside the drawer. """
